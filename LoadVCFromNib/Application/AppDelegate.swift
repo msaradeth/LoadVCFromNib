@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let items = [Product]()
         let productApi = ProductApiService()
-        let viewModel = ListViewModel(items: items, productApiService: productApi)
+        let viewModel = ListViewModel(items: items, segmentedControlIndex: 0, productApiService: productApi)
         
         let vc = ListVC(title: "Products", viewModel: viewModel, nibName: "ListVC")
         let rootNav = UINavigationController(rootViewController: vc)

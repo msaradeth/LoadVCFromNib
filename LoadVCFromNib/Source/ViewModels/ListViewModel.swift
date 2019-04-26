@@ -16,12 +16,31 @@ protocol ListViewModelDelegate {
 }
 
 class ListViewModel: NSObject {
-    var items: [Product]
+    var favorites: [Product]
     var productApiService: ProductApiService
+    var items: [Product] {
+        didSet {
+            favorites = items.filter({ Cache.shared.getFavorite(id: $0.id) == true })
+        }
+    }
+    var segmentedControlIndex: Int {
+        didSet {
+            favorites = items.filter({ Cache.shared.getFavorite(id: $0.id) == true })
+        }
+    }
+    var count: Int {
+        return segmentedControlIndex == 0 ? items.count : favorites.count
+    }
+    subscript(index: Int) -> Product {
+        return segmentedControlIndex == 0 ? items[index] : favorites[index]
+    }
     
-    init(items: [Product], productApiService: ProductApiService) {
+    init(items: [Product], segmentedControlIndex: Int, productApiService: ProductApiService) {
         self.items = items
+        self.favorites = items.filter({ Cache.shared.getFavorite(id: $0.id) == true })
+        self.segmentedControlIndex = segmentedControlIndex
         self.productApiService = productApiService
+        
     }
     
     func loadData(completion: @escaping () -> Void) {

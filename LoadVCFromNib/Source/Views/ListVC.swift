@@ -28,30 +28,43 @@ class ListVC: UITableViewController {
 
     func setupVC() {
         tableView.register(UINib(nibName: "ListTableViewCell", bundle: nil), forCellReuseIdentifier: ListTableViewCell.cellIdentifier)
+        let segmentedControl = UISegmentedControl(items: ["All", "Favorites"])
+        segmentedControl.addTarget(self, action: #selector(toggleSegmentedControl(_:)), for: .valueChanged)
+        self.navigationItem.titleView = segmentedControl
+        segmentedControl.selectedSegmentIndex = viewModel.segmentedControlIndex
     }
 
- 
-    // MARK: - Table view data source and delegate
+    @objc func toggleSegmentedControl(_ sender: UISegmentedControl) {
+        viewModel.segmentedControlIndex = sender.selectedSegmentIndex
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("Invalid init")
+    }
+}
+
+
+// MARK: - Table view data source and delegate
+extension ListVC {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.items.count
+        return viewModel.count
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ListTableViewCell.cellIdentifier, for: indexPath) as! ListTableViewCell
-        cell.configure(item: viewModel.items[indexPath.row], delegate: viewModel)
+        cell.configure(item: viewModel[indexPath.row], delegate: viewModel)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        let item = viewModel.items[indexPath.row]
+        let item = viewModel[indexPath.row]
         let detailViewModel = DetailViewModel(item: item)
         let detailVC = DetailVC(title: item.name, viewModel: detailViewModel, nibName: "DetailVC")
         navigationController?.pushViewController(detailVC, animated: true)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("Invalid init")
     }
 }
 
