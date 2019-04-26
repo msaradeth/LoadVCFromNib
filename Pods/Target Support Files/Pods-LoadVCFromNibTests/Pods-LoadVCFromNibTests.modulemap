@@ -1,0 +1,6 @@
+framework module Pods_LoadVCFromNibTests {
+  umbrella header "Pods-LoadVCFromNibTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
